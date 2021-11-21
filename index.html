@@ -87,7 +87,17 @@
     </section>
   </main>
 
+  <script src="https://cdn.trackjs.com/agent/v3/latest/t.js"></script>
   <script>
+    window.TrackJS && TrackJS.install({
+      token: "708c3d8d1e984371aaf7eed31a81cb12"
+      // for more configuration options, see https://docs.trackjs.com
+    });
+  </script>
+
+  <script>
+    TrackJS.track('Testing TrackJS!');
+
     let form = document.querySelector('form');
     form.addEventListener('submit', e => {
       e.preventDefault();
@@ -95,13 +105,100 @@
       let firstNum = document.querySelector('#first-num').value;
       let secondNum = document.querySelector('#second-num').value;
       let operator = document.querySelector('#operator').value;
-      output.innerHTML = eval(`${firstNum} ${operator} ${secondNum}`);
+
+      let result = NaN;
+      class DenominatorError extends Error {
+        constructor(message) {
+          super(message);
+          this.name = "DenominatorError";
+        }
+      }
+      function test(firstNum, secondNum, operator) {
+        if (operator == "/" && secondNum == "0") {
+          throw new DenominatorError('The denominator cannot be 0!');
+        }
+        else if (firstNum == "" || secondNum == "") {
+          throw 'Please fill both input as number!';
+        }
+        else {
+          result = eval(`${firstNum} ${operator} ${secondNum}`);
+        }
+      }
+
+      try {
+        test(firstNum, secondNum, operator)
+      }
+      catch (e) {
+        console.error(e);
+      }
+      finally {
+        output.innerHTML = result;
+      }
     });
 
     let errorBtns = Array.from(document.querySelectorAll('#error-btns > button'));
 
     // Start your code here
     // You may move this JS to another file if you wish
+    errorBtns[0].addEventListener('click', e => {
+      console.log("Console Log Demo");
+    });
+    errorBtns[1].addEventListener('click', e => {
+      console.error("Console Error Demo");
+    });
+    let count = 0;
+    errorBtns[2].addEventListener('click', e => {
+      count++;
+      console.log("Count Button: ", count);
+    });
+    errorBtns[3].addEventListener('click', e => {
+      console.warn("Console Warn Button");
+    });
+    errorBtns[4].addEventListener('click', e => {
+      let number = 2;
+      const error_message = 'The number does not equal to 3';
+      console.assert(number == 3, { number, error_message });
+    });
+    errorBtns[5].addEventListener('click', e => {
+      count = 0;
+      console.clear();
+    });
+    errorBtns[6].addEventListener('click', e => {
+      console.dir(errorBtns[6].outerHTML);
+    });
+    errorBtns[7].addEventListener('click', e => {
+      console.dirxml(errorBtns[7].outerHTML);
+    });
+    errorBtns[8].addEventListener('click', e => {
+      console.group();
+    });
+    errorBtns[9].addEventListener('click', e => {
+      console.groupEnd();
+    });
+    errorBtns[10].addEventListener('click', e => {
+      console.table(["110", "is", "interesting"]);
+    });
+    errorBtns[11].addEventListener('click', e => {
+      console.time('Timer Button');
+    });
+    errorBtns[12].addEventListener('click', e => {
+      console.timeEnd('Timer Button');
+    });
+    errorBtns[13].addEventListener('click', e => {
+      function deepest() {
+        function deeper() {
+          function deep() {
+            console.trace();
+          }
+          deep();
+        }
+        deeper();
+      }
+      deepest();
+    });
+    errorBtns[14].addEventListener('click', e => {
+      boom();
+    });
   </script>
 </body>
 
